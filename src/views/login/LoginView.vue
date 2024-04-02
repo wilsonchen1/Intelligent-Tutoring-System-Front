@@ -26,7 +26,7 @@
                     <el-button type="primary" class="login-btn" @click="submitForm()"
                         >登录
                     </el-button>
-                    <div class="forget-btn" @click="openForgetDialog()">
+                    <div class="forget-btn" @click="openForgetPasswordDialog()">
                         忘记密码？
                     </div>
                 </el-form-item>
@@ -80,72 +80,49 @@
         return activeName.value === 'login' ? loginData : registerData;
     });
 
+    const commonRules = {
+        account: [
+            {
+                required: true,
+                message: '请输入学号',
+                trigger: 'blur'
+            },
+            {
+                min: 10,
+                max: 10,
+                message: '学号的长度为10',
+                trigger: 'blur'
+            }
+        ],
+        password: [
+            {
+                required: true,
+                message: '请输入密码',
+                trigger: 'blur'
+            },
+            {
+                min: 3,
+                max: 10,
+                message: '密码的长度在3-10之间',
+                trigger: 'blur'
+            }
+        ]
+    };
     const rules = computed(() => {
-        return activeName.value === 'login'
-            ? {
-                  account: [
-                      {
-                          required: true,
-                          message: '请输入学号',
-                          trigger: 'blur'
-                      },
-                      {
-                          min: 10,
-                          max: 10,
-                          message: '学号的长度为10',
-                          trigger: 'blur'
-                      }
-                  ],
-                  password: [
-                      {
-                          required: true,
-                          message: '请输入密码',
-                          trigger: 'blur'
-                      },
-                      {
-                          min: 3,
-                          max: 10,
-                          message: '密码的长度在3-10之间',
-                          trigger: 'blur'
-                      }
-                  ]
-              }
-            : {
-                  account: [
-                      {
-                          required: true,
-                          message: '请输入学号',
-                          trigger: 'blur'
-                      },
-                      {
-                          min: 10,
-                          max: 10,
-                          message: '学号的长度为10',
-                          trigger: 'blur'
-                      }
-                  ],
-                  password: [
-                      {
-                          required: true,
-                          message: '请输入密码',
-                          trigger: 'blur'
-                      },
-                      {
-                          min: 3,
-                          max: 10,
-                          message: '密码的长度在3-10之间',
-                          trigger: 'blur'
-                      }
-                  ],
-                  repassword: [
-                      {
-                          required: true,
-                          message: '请确认密码',
-                          trigger: 'blur'
-                      },
-                      { validator: validateRepassword, trigger: 'blur' }
-                  ]
-              };
+        if (activeName.value === 'login') {
+            return commonRules;
+        }
+        return {
+            ...commonRules,
+            repassword: [
+                {
+                    required: true,
+                    message: '请确认密码',
+                    trigger: 'blur'
+                },
+                { validator: validateRepassword, trigger: 'blur' }
+            ]
+        };
     });
     function validateRepassword(rule: any, value: string, callback: any) {
         if (value !== currentFormData.value.password) {
@@ -160,32 +137,25 @@
                 : await register(currentFormData.value);
         showMessage(res.data.message);
     }
+
     function showMessage(message: string) {
-        if (message === '账号注册成功') {
-            ElMessage({
-                message: '账号注册成功，请重新登录',
-                type: 'success'
-            });
+        ElMessage({
+            message,
+            type:
+                message === '登陆成功' || message === '账号注册成功，请重新登录'
+                    ? 'success'
+                    : 'error'
+        });
+        if (message === '账号注册成功，请重新登录') {
             activeName.value = 'login';
         } else if (message === '登陆成功') {
-            ElMessage({
-                message: '登陆成功！',
-                type: 'success'
-            });
             router.push('/home');
-        } else if (
-            message === '账号存在' ||
-            message === '密码错误' ||
-            message === '账号失效' ||
-            message === '账号未注册'
-        ) {
-            ElMessage.error(message);
         }
     }
 
     // forget是忘记密码弹窗
     const forget = ref();
-    function openForgetDialog() {
+    function openForgetPasswordDialog() {
         forget.value.open();
     }
 </script>

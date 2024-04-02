@@ -36,6 +36,11 @@ const router = createRouter({
                     path: '/generate',
                     name: 'generate',
                     component: () => import('../views/manager/generate/GenerateView.vue')
+                },
+                {
+                    path: '/files',
+                    name: 'files',
+                    component: () => import('../views/manager/files/FilesView.vue')
                 }
             ]
         }
