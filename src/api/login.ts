@@ -5,14 +5,16 @@ import { type FormData } from '@/type/login';
 export const registerService = (data: FormData) => {
     const {
         account,
-        password
+        password,
+        identity
     } = data;
     return instance({
         url: '/api/register',
         method: 'POST',
         data: {
             account,
-            password
+            password,
+            identity
         }
     })
 }

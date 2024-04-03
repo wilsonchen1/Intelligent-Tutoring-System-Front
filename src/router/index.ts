@@ -10,11 +10,11 @@ const router = createRouter({
         },
         {
             path: '/',
-            redirect: '/home'
+            redirect: '/admin'
         },
         {
-            path: '/menu',
-            name: 'menu',
+            path: '/admin',
+            name: 'admin',
             component: () => import('../views/manager/menu/MenuView.vue'),
             children: [
                 {

@@ -107,8 +107,8 @@
             },
             {
                 min: 3,
-                max: 10,
-                message: '密码的长度在3-10之间',
+                max: 20,
+                message: '密码的长度在3-20之间',
                 trigger: 'blur'
             }
         ],

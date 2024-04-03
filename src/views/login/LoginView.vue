@@ -38,6 +38,20 @@
                         autocomplete="off"
                     />
                 </el-form-item>
+
+                <el-form-item
+                    v-if="activeName === 'register'"
+                    label="选择身份"
+                    prop="identity"
+                >
+                    <el-select
+                        v-model="currentFormData.identity"
+                        placeholder="选择身份"
+                    >
+                        <el-option label="学生" value="student" />
+                        <el-option label="老师" value="admin" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item v-if="activeName === 'register'">
                     <el-button
                         type="primary"
@@ -73,7 +87,8 @@
     const registerData: FormData = reactive({
         account: '',
         password: '',
-        repassword: ''
+        repassword: '',
+        identity: ''
     });
 
     const currentFormData = computed(() => {
@@ -102,8 +117,8 @@
             },
             {
                 min: 3,
-                max: 10,
-                message: '密码的长度在3-10之间',
+                max: 20,
+                message: '密码的长度在3-20之间',
                 trigger: 'blur'
             }
         ]
@@ -121,6 +136,12 @@
                     trigger: 'blur'
                 },
                 { validator: validateRepassword, trigger: 'blur' }
+            ],
+            identity: [
+                {
+                    required: true,
+                    message: '身份必选'
+                }
             ]
         };
     });
@@ -135,10 +156,12 @@
             activeName.value === 'login'
                 ? await login(currentFormData.value)
                 : await register(currentFormData.value);
-        showMessage(res.data.message);
+        console.log(res);
+        routerRedirect(res.data);
     }
 
-    function showMessage(message: string) {
+    function routerRedirect(data: any) {
+        const message = data.message;
         ElMessage({
             message,
             type:
@@ -148,8 +171,10 @@
         });
         if (message === '账号注册成功，请重新登录') {
             activeName.value = 'login';
-        } else if (message === '登陆成功') {
-            router.push('/home');
+        } else if (message === '登陆成功' && data.results.identity === 'admin') {
+            router.push('/admin');
+        } else {
+            router.push('/student');
         }
     }
 
@@ -174,12 +199,18 @@
         .forget-btn {
             color: darkgray;
             padding-left: 30px;
+            cursor: pointer;
         }
         .login-btn {
             width: 48%;
         }
         .register-btn {
             width: 80%;
+        }
+        .identify-select {
+            width: 80%;
+            margin-bottom: 20px;
+            margin-left: 60px;
         }
     }
 </style>
