@@ -15,32 +15,32 @@ const router = createRouter({
         {
             path: '/admin',
             name: 'admin',
-            component: () => import('../views/manager/menu/MenuView.vue'),
+            component: () => import('../views/admin/menu/MenuView.vue'),
             children: [
                 {
                     path: '/home',
                     name: 'home',
-                    component: () => import('../views/manager/home/HomeView.vue')
+                    component: () => import('../views/admin/home/HomeView.vue')
                 },
                 {
                     path: '/grades',
                     name: 'grades',
-                    component: () => import('../views/manager/grades/GradesView.vue')
+                    component: () => import('../views/admin/grades/GradesView.vue')
                 },
                 {
                     path: '/publish',
                     name: 'publish',
-                    component: () => import('../views/manager/publish/PublishView.vue')
+                    component: () => import('../views/admin/publish/PublishView.vue')
                 },
                 {
                     path: '/generate',
                     name: 'generate',
-                    component: () => import('../views/manager/generate/GenerateView.vue')
+                    component: () => import('../views/admin/generate/GenerateView.vue')
                 },
                 {
                     path: '/files',
                     name: 'files',
-                    component: () => import('../views/manager/files/FilesView.vue')
+                    component: () => import('../views/admin/files/FilesView.vue')
                 }
             ]
         }
