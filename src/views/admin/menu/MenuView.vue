@@ -14,6 +14,7 @@
                     <el-menu-item index="publish">Publish Assignment</el-menu-item>
                     <el-menu-item index="generate">Generate Assignment</el-menu-item>
                     <el-menu-item index="files">文件中心</el-menu-item>
+                    <el-menu-item index="posts">论坛</el-menu-item>
                 </el-menu>
             </el-aside>
             <el-main><RouterView /></el-main>
