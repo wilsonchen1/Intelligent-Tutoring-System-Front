@@ -41,7 +41,7 @@
         }
     }
 
-    function editRow(row) {
+    function editRow(row: any) {
         console.log('编辑行:', row);
         // 这里可以根据需要实现编辑逻辑，例如显示一个表单对话框以编辑选定的行
     }

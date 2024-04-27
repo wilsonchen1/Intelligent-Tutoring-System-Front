@@ -75,6 +75,10 @@
     import forgetDialog from './components/ForgetDialog.vue';
 
     import { useRouter } from 'vue-router';
+    import { useStore } from 'vuex';
+    import { type User, type State } from '@/type/index';
+
+    const store = useStore();
 
     const router = useRouter();
     // 控制登陆和注册的切换
@@ -156,7 +160,18 @@
             activeName.value === 'login'
                 ? await login(currentFormData.value)
                 : await register(currentFormData.value);
-        console.log(res);
+        const userData = res.data.results;
+
+        // 构造个人信息并存到全局store
+        const userNeeded = {
+            user_id: userData.id,
+            account: userData.account,
+            name: userData.name,
+            identity: userData.identity
+        };
+        if (res.data && res.data.results) {
+            localStorage.setItem('user', JSON.stringify(userNeeded));
+        }
         routerRedirect(res.data);
     }
 
@@ -174,7 +189,7 @@
         } else if (message === '登陆成功' && data.results.identity === 'admin') {
             router.push('/admin');
         } else {
-            router.push('/student');
+            activeName.value = 'login';
         }
     }
 

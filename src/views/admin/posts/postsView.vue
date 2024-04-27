@@ -1,59 +1,72 @@
 <template>
-    <div class="scroll-container">
-        <el-card
-            class="box-card"
-            v-for="post in posts"
-            :key="post.id"
-            style="margin-bottom: 20px"
-        >
-            <div slot="header" class="post-title">
-                <div>
-                    <h3>{{ post.title }}</h3>
-                    <span class="author">发布者：{{ post.author }}</span>
-                </div>
-                <el-button type="primary" @click="toggleReply(post.id)"
-                    >回复</el-button
-                >
-            </div>
-            <div class="post-content">{{ post.content }}</div>
-            <el-collapse v-model="activeNames">
-                <el-collapse-item
-                    :title="'回复 (' + post.replies.length + '条)'"
-                    :name="`post-${post.id}`"
-                    :key="`collapse-${post.id}`"
-                >
-                    <div class="reply-input" v-show="replyVisible[post.id]">
-                        <el-input
-                            type="textarea"
-                            v-model="replyContent[post.id]"
-                            placeholder="输入回复内容..."
-                            class="reply-textarea"
-                        ></el-input>
-                        <el-button
-                            type="primary"
-                            @click="submitReply(post.id)"
-                            :loading="replyLoading[post.id]"
-                            class="reply-button"
-                            >发送</el-button
-                        >
+    <div class="container">
+        <div class="scroll-container">
+            <el-card
+                class="box-card"
+                v-for="post in posts"
+                :key="post.id"
+                style="margin-bottom: 20px"
+            >
+                <div slot="header" class="post-title">
+                    <div>
+                        <h3>{{ post.title }}</h3>
+                        <span class="author">发布者：{{ post.author }}</span>
                     </div>
-                    <div
-                        v-for="(reply, index) in post.replies"
-                        :key="reply.id"
-                        class="reply"
+                    <el-button type="primary" @click="toggleReply(post.id)"
+                        >回复</el-button
                     >
-                        <p>{{ reply.content }}</p>
-                        <p class="reply-info">
-                            {{ reply.replier }} - {{ reply.create_time }}
-                        </p>
-                    </div>
-                </el-collapse-item>
-            </el-collapse>
-        </el-card>
+                </div>
+                <div class="post-content">{{ post.content }}</div>
+                <el-collapse v-model="activeNames">
+                    <el-collapse-item
+                        :title="'回复 (' + post.replies.length + '条)'"
+                        :name="`post-${post.id}`"
+                        :key="`collapse-${post.id}`"
+                    >
+                        <div class="reply-input" v-show="replyVisible[post.id]">
+                            <el-input
+                                type="textarea"
+                                v-model="replyContent[post.id]"
+                                placeholder="输入回复内容..."
+                                class="reply-textarea"
+                            ></el-input>
+                            <el-button
+                                type="primary"
+                                @click="submitReply(post.id)"
+                                :loading="replyLoading[post.id]"
+                                class="reply-button"
+                                >发送</el-button
+                            >
+                            <el-button
+                                type="primary"
+                                @click="cancelReply(post.id)"
+                                class="reply-button"
+                                >取消</el-button
+                            >
+                        </div>
+                        <div
+                            v-for="(reply, index) in post.replies"
+                            :key="reply.id"
+                            class="reply"
+                        >
+                            <p>{{ reply.content }}</p>
+                            <p class="reply-info">
+                                {{ reply.replier }} - {{ reply.create_time }}
+                            </p>
+                        </div>
+                    </el-collapse-item>
+                </el-collapse>
+            </el-card>
+        </div>
+        <div class="create-post">
+            <create-post @post-created="getPosts" :user="user"></create-post>
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
-    import { ref, onMounted, reactive } from 'vue';
+    import { ref, onMounted, reactive, computed } from 'vue';
+    import { useStore } from 'vuex';
+    import { type User, type State } from '@/type/index';
     import {
         ElCard,
         ElButton,
@@ -62,8 +75,13 @@
         ElInput,
         ElMessage
     } from 'element-plus';
+    import CreatePost from './components/createPostView.vue';
     import instance from '@/http/index';
     import { type Post } from '@/type/posts';
+
+    // 全局用户状态
+    const store = useStore<State>();
+    const user = computed(() => store.state.user as User | null);
 
     const posts = ref<Post[]>([]);
     const activeNames = ref<string[]>([]); // 使用字符串数组
@@ -75,6 +93,7 @@
     const replyVisible = reactive<ReplyVisibility>({});
     const replyContent = reactive<{ [key: number]: string }>({});
     const replyLoading = reactive<{ [key: number]: boolean }>({});
+    // 获取所有帖子
     const getPosts = async () => {
         const res = await instance({
             method: 'GET',
@@ -85,17 +104,18 @@
             replyVisible[post.id] = false;
             replyContent[post.id] = '';
             replyLoading[post.id] = false;
-            activeNames.value.push(`post-${post.id}`); // 默认展开所有帖子的回复
+            // activeNames.value.push(`post-${post.id}`); // 默认展开所有帖子的回复
         });
     };
 
     const toggleReply = (postId: number) => {
-        replyVisible[postId] = !replyVisible[postId];
+        replyVisible[postId] = true;
+        activeNames.value.push(`post-${postId}`); // 点击回复时展开该帖子
     };
 
     const submitReply = async (postId: number) => {
         if (!replyContent[postId]) {
-            alert('回复内容不能为空！');
+            ElMessage.error('回复内容不能为空！');
             return;
         }
         console.log(replyContent, 'replyContent');
@@ -107,7 +127,7 @@
             data: {
                 post_id: postId,
                 // 之后user_id换成从全局获取
-                user_id: 7,
+                user_id: user.value?.user_id,
                 content: replyContent[postId]
             }
         });
@@ -115,13 +135,23 @@
         getPosts();
         replyLoading[postId] = false;
     };
-
+    const cancelReply = (postId: number) => {
+        replyVisible[postId] = false;
+    };
     onMounted(getPosts);
 </script>
 <style lang="scss" scoped>
+    .container {
+        display: flex;
+    }
     .scroll-container {
         max-height: 79vh; /* 限制容器最大高度 */
         overflow-y: auto; /* 当内容超出时显示滚动条 */
+        width: 60%;
+    }
+    .create-post {
+        width: 40%; /* 占据剩余的 40% 宽度 */
+        padding: 20px; /* 添加一些内边距 */
     }
     .box-card {
         transition: 0.3s;

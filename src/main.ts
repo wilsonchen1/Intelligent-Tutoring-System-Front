@@ -10,6 +10,7 @@ import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import 'element-plus/dist/index.css'
 import './assets/global.scss'
+import store from './stores/index';
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
@@ -27,5 +28,6 @@ app.use(ElementPlus, {
 
 app.use(createPinia())
 app.use(router)
+app.use(store)
 
 app.mount('#app')

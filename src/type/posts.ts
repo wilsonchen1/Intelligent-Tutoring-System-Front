@@ -13,3 +13,9 @@ export interface Reply {
     create_time: string;
     replier: string;
 }
+
+export interface PostData {
+    userId: string;
+    title: string;
+    content: string;
+}
