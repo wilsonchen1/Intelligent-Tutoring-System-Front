@@ -73,14 +73,12 @@
 
     import { loginService as login, registerService as register } from '@/api/login';
     import forgetDialog from './components/ForgetDialog.vue';
-
-    import { useRouter } from 'vue-router';
     import { useStore } from 'vuex';
+    import { useRouter } from 'vue-router';
     import { type User, type State } from '@/type/index';
 
-    const store = useStore();
-
     const router = useRouter();
+    const store = useStore();
     // 控制登陆和注册的切换
     const activeName = ref('login');
 
@@ -170,6 +168,7 @@
             identity: userData.identity
         };
         if (res.data && res.data.results) {
+            store.dispatch('login', userNeeded);
             localStorage.setItem('user', JSON.stringify(userNeeded));
         }
         routerRedirect(res.data);

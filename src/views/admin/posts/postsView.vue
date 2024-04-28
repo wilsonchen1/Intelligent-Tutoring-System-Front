@@ -81,7 +81,7 @@
 
     // 全局用户状态
     const store = useStore<State>();
-    const user = computed(() => store.state.user as User | null);
+    const user = computed(() => store.state.user as User | undefined);
 
     const posts = ref<Post[]>([]);
     const activeNames = ref<string[]>([]); // 使用字符串数组
