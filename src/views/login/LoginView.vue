@@ -158,24 +158,9 @@
             activeName.value === 'login'
                 ? await login(currentFormData.value)
                 : await register(currentFormData.value);
-        const userData = res.data.results;
+        console.log(res);
+        const message = res.data.message;
 
-        // 构造个人信息并存到全局store
-        const userNeeded = {
-            user_id: userData.id,
-            account: userData.account,
-            name: userData.name,
-            identity: userData.identity
-        };
-        if (res.data && res.data.results) {
-            store.dispatch('login', userNeeded);
-            localStorage.setItem('user', JSON.stringify(userNeeded));
-        }
-        routerRedirect(res.data);
-    }
-
-    function routerRedirect(data: any) {
-        const message = data.message;
         ElMessage({
             message,
             type:
@@ -185,11 +170,26 @@
         });
         if (message === '账号注册成功，请重新登录') {
             activeName.value = 'login';
-        } else if (message === '登陆成功' && data.results.identity === 'admin') {
+        } else if (message === '登陆成功' && res.data.results.identity === 'admin') {
+            const userData = res.data.results;
+            storeUser(userData);
             router.push('/admin');
         } else {
             activeName.value = 'login';
+            currentFormData.value.password = '';
         }
+    }
+
+    function storeUser(userData: any) {
+        // 构造个人信息并存到全局store
+        const userNeeded = {
+            user_id: userData.id,
+            account: userData.account,
+            name: userData.name,
+            identity: userData.identity
+        };
+        store.dispatch('login', userNeeded);
+        localStorage.setItem('user', JSON.stringify(userNeeded));
     }
 
     // forget是忘记密码弹窗
