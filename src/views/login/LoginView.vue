@@ -173,7 +173,7 @@
         } else if (message === '登陆成功' && res.data.results.identity === 'admin') {
             const userData = res.data.results;
             storeUser(userData);
-            router.push('/admin');
+            router.push('/home');
         } else {
             activeName.value = 'login';
             currentFormData.value.password = '';

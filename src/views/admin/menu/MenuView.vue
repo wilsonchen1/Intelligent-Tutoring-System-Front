@@ -10,18 +10,19 @@
             <el-aside width="200px">
                 <!-- Menu for navigation -->
                 <el-menu default-active="home" router>
-                    <el-menu-item index="home">主页</el-menu-item>
-                    <el-menu-item v-if="user?.identity === 'admin'" index="grades"
+                    <el-menu-item index="/home">个人中心</el-menu-item>
+                    <el-menu-item index="/texts">实验中心</el-menu-item>
+                    <el-menu-item v-if="user?.identity === 'admin'" index="/grades"
                         >学生管理</el-menu-item
                     >
-                    <el-menu-item v-if="user?.identity === 'admin'" index="publish"
+                    <el-menu-item v-if="user?.identity === 'admin'" index="/publish"
                         >任务发布</el-menu-item
                     >
-                    <el-menu-item v-if="user?.identity === 'admin'" index="generate"
+                    <el-menu-item v-if="user?.identity === 'admin'" index="/generate"
                         >任务生成</el-menu-item
                     >
-                    <el-menu-item index="files">文件中心</el-menu-item>
-                    <el-menu-item index="posts">论坛</el-menu-item>
+                    <el-menu-item index="/files">文件中心</el-menu-item>
+                    <el-menu-item index="/posts">论坛</el-menu-item>
                 </el-menu>
             </el-aside>
             <el-main><RouterView /></el-main>

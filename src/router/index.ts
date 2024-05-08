@@ -13,8 +13,8 @@ const router = createRouter({
             redirect: '/login'
         },
         {
-            path: '/admin',
-            name: 'admin',
+            path: '/home',
+            name: 'home',
             component: () => import('../views/admin/menu/MenuView.vue'),
             children: [
                 {
@@ -46,6 +46,18 @@ const router = createRouter({
                     path: '/posts',
                     name: 'posts',
                     component: () => import('../views/admin/posts/postsView.vue')
+                },
+                {
+                    path: '/texts',
+                    name: 'texts',
+                    component: () => import('../views/admin/text/homeView.vue'),
+                    children: [
+                        {
+                            path: 'bomb-game',
+                            name: 'bomb-game',
+                            component: () => import('../views/admin/text/bomb/bombView.vue'),
+                        }
+                    ]
                 },
             ]
         }
